@@ -2,7 +2,7 @@
 
 A customizable input device based on Arduino featuring a **rotary encoder** and **two push buttons**. Designed for quick system control such as volume adjustment, media shortcuts, system locking, and more - using USB HID functionality.
 
-## ?? Features
+## :rocket: Features
 
 - Volume control with the encoder (up/down/mute)
 - Mouse movement triggered by a button
@@ -11,7 +11,7 @@ A customizable input device based on Arduino featuring a **rotary encoder** and 
 - Debouncing logic to prevent accidental input
 - Auto-unlock logic after user interaction or timeout
 
-## ??? Recommended Hardware
+## :hammer_and_wrench: Recommended Hardware
 
 - Arduino **Pro Micro** or **Leonardo** (HID-compatible)
 - Rotary encoder with push button (EC11 or similar)
@@ -19,7 +19,7 @@ A customizable input device based on Arduino featuring a **rotary encoder** and 
 - 1 switch button
 - Jumper wires and breadboard or custom PCB
 
-## ?? Wiring
+## :link: Wiring
 
 | Component      | Arduino Pin   |
 |----------------|----------------|
@@ -31,9 +31,9 @@ A customizable input device based on Arduino featuring a **rotary encoder** and 
 
 <img alt="Wired image" src="docs/wired.png">
 
-> ?? All buttons use `INPUT_PULLUP`, so they should connect to **GND** when pressed.
+> :warning: All buttons use `INPUT_PULLUP`, so they should connect to **GND** when pressed.
 
-## ?? Required Libraries
+## :package: Required Libraries
 
 Install these libraries via the Arduino IDE Library Manager or manually:
 
@@ -41,7 +41,7 @@ Install these libraries via the Arduino IDE Library Manager or manually:
 - [`TimerOne`](https://github.com/PaulStoffregen/TimerOne)
 - [`HID-Project`](https://github.com/NicoHood/HID)
 
-## ?? Setup & Upload
+## :gear: Setup & Upload
 
 1. Connect your Pro Micro / Leonardo to your computer.
 2. Open `custom-keys.ino` in the Arduino IDE.
@@ -50,11 +50,11 @@ Install these libraries via the Arduino IDE Library Manager or manually:
 5. Upload the sketch.
 6. Done! Start using your custom buttons and encoder.
 
-## ?? License
+## :page_with_curl: License
 
 This project is licensed under the **GNU General Public License (GPL)**. See the `LICENSE` file for details.
 
-## ????? Credits
+## :astronaut: Credits
 
 Created by Ferran Catalan.  
 Inspired by the need for quick, customizable system control with simple hardware.
