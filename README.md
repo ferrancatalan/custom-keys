@@ -37,7 +37,7 @@ A customizable input device based on Arduino featuring a **rotary encoder** and 
 
 Install these libraries via the Arduino IDE Library Manager or manually:
 
-- [`ClickEncoder`](https://github.com/ q/encoder)
+- [`ClickEncoder`](https://github.com/0xPIT/encoder)
 - [`TimerOne`](https://github.com/PaulStoffregen/TimerOne)
 - [`HID-Project`](https://github.com/NicoHood/HID)
 
