@@ -18,6 +18,7 @@ A customizable input device based on Arduino featuring a **rotary encoder** and 
 - 1 push button
 - 1 switch button
 - Jumper wires and breadboard or custom PCB
+> :information_source: Complete list of functions to modify button behavior: [Functions list](https://github.com/NicoHood/HID/blob/master/src/HID-APIs/ConsumerAPI.h)
 
 ## :link: Wiring
 
