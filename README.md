@@ -2,14 +2,20 @@
 
 A customizable input device based on Arduino featuring a **rotary encoder** and **two push buttons**. Designed for quick system control such as volume adjustment, media shortcuts, system locking, and more - using USB HID functionality.
 
-## :rocket: Features
+## :rocket: Examples
+### example-1
+- Rotary: Volume control
+- Rotary double click: play-pause
+- Rotary click: mute
+- Push button: lock screen
+- Switch button: mouse jitter
 
-- Volume control with the encoder (up/down/mute)
-- Mouse movement triggered by a button
-- System lock shortcut (`Win + L`)
-- Single and double click detection on the encoder button
-- Debouncing logic to prevent accidental input
-- Auto-unlock logic after user interaction or timeout
+### example-2
+- Rotary: Volume control
+- Rotary double click: play-pause
+- Rotary click: lock screen
+- Push button: mute
+- Switch button: toggle activation
 
 ## :hammer_and_wrench: Recommended Hardware
 
@@ -30,7 +36,7 @@ A customizable input device based on Arduino featuring a **rotary encoder** and 
 | Push Button    | 2              |
 | Switch Button  | 3              |
 
-<img alt="Wired image" src="docs/wired.png">
+<img alt="Wired image" src="docs/wired.svg">
 
 > :warning: All buttons use `INPUT_PULLUP`, so they should connect to **GND** when pressed.
 
