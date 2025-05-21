@@ -13,14 +13,14 @@ A customizable input device based on Arduino featuring a **rotary encoder** and 
 
 ## :rocket: Examples
 
-### example-1
+### example-1 [:link:](https://github.com/ferrancatalan/custom-keys/tree/main/examples/example-1)
 - Rotary: Volume control
 - Rotary double click: play-pause
 - Rotary click: mute
 - Push button: lock screen
 - Switch button: mouse jitter
 
-### example-2
+### example-2 [:link:](https://github.com/ferrancatalan/custom-keys/tree/main/examples/example-2)
 - Rotary: Volume control
 - Rotary double click: play-pause
 - Rotary click: lock screen
