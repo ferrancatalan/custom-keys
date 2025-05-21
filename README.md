@@ -1,4 +1,13 @@
-# Custom Keys
+<div align="center">
+  <a href="https://github.com/ferrancatalan/custom-keys">
+    <img src="docs/logo.svg" alt="Logo" width="80" height="80">
+  </a>
+
+  <h3 align="center">Custom-keys</h3>
+
+</div>
+
+# About
 
 A customizable input device based on Arduino featuring a **rotary encoder** and **two push buttons**. Designed for quick system control such as volume adjustment, media shortcuts, system locking, and more - using USB HID functionality.
 
