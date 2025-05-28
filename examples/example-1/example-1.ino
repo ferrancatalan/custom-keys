@@ -1,5 +1,6 @@
 /*
   Project:     Custom Keys
+  File:        example-1.ino
   Description: Customizable input device using a rotary encoder and two buttons.
                Can be used for media control, shortcuts, locking the system, and more.
   Author:      Ferran Catalan
@@ -27,7 +28,9 @@
 #define ENCODER_SW A2
 
 ClickEncoder *encoder;
-int16_t last, value;
+int16_t rawValue = 0;
+int16_t logicalValue = 0;
+int16_t lastLogicalValue = -1;
 
 const int buttonSwitchPin = 3; // Button for triggering mouse movement
 int stateButtonSwitch = HIGH;
@@ -57,6 +60,7 @@ void setup() {
 
   // Initialize HID media control
   Consumer.begin();
+  Keyboard.begin();
 
   // Initialize encoder
   encoder = new ClickEncoder(ENCODER_DT, ENCODER_CLK, ENCODER_SW);
@@ -64,8 +68,6 @@ void setup() {
   // Setup timer interrupt for encoder
   Timer1.initialize(1000);               // Every 1ms
   Timer1.attachInterrupt(timerIsr);
-
-  last = -1;
 }
 
 void loop() {
@@ -91,19 +93,20 @@ void loop() {
     delay(1000); // Limit movement frequency
   }
 
-  // Read encoder movement
-  value += encoder->getValue();
+  // Read encoder movement and reduce sensitivity
+  rawValue += encoder->getValue();
+  logicalValue = rawValue / 4;  // Reduce sensitivity (4 steps per detent)
 
-  // If encoder position changed, adjust volume
-  if (value != last) {
-    if (last < value) {
+  // If logical encoder position changed, adjust volume
+  if (logicalValue != lastLogicalValue) {
+    if (logicalValue > lastLogicalValue) {
       Consumer.write(MEDIA_VOLUME_UP);
     } else {
       Consumer.write(MEDIA_VOLUME_DOWN);
     }
-    last = value;
+    lastLogicalValue = logicalValue;
     Serial.print("Encoder Value: ");
-    Serial.println(value);
+    Serial.println(logicalValue);
   }
 
   // Check encoder button status

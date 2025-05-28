@@ -1,5 +1,6 @@
 /*
   Project:     Custom Keys
+  File:        example-2.ino
   Description: Customizable input device using a rotary encoder and two buttons.
                Can be used for media control, shortcuts, locking the system, and more.
   Author:      Ferran Catalan
@@ -18,6 +19,7 @@
 
   File:   
 */
+
 #include <ClickEncoder.h>
 #include <TimerOne.h>
 #include <HID-Project.h>
@@ -27,82 +29,96 @@
 #define ENCODER_DT A1
 #define ENCODER_SW A2
 
-ClickEncoder *encoder;
-int16_t last, value;
+ClickEncoder *rotaryEncoder;
+int16_t rawEncoderValue = 0;
+int16_t logicalEncoderValue = 0;
+int16_t lastLogicalEncoderValue = -1;
 
-const int buttonSwitchPin = 3; // Activar/desactivar controles
-const int buttonPushPin = 2;   // Silenciar
+int16_t lastValue, currentValue;
 
-unsigned long lastButtonPushTime = 0;
-unsigned long debounceDelay = 200;
+const int switchButtonPin = 3; 
+const int pushButtonPin = 2;   
 
-bool controlesActivos = false;
-bool estadoAnteriorSwitch = false;
+// Debounce and lock state management
+unsigned long lastPushButtonTime = 0;
+unsigned long debounceTime = 200;
 
+bool controlsActive = false;
+bool lastSwitchButtonState = false;
+
+// Interrupt service routine for encoder updates
 void timerIsr() {
-  encoder->service();
+  rotaryEncoder->service();
 }
 
 void setup() {
   Serial.begin(9600);
 
-  pinMode(buttonSwitchPin, INPUT_PULLUP);
-  pinMode(buttonPushPin, INPUT_PULLUP);
+  // Configure button pins
+  pinMode(switchButtonPin, INPUT_PULLUP);
+  pinMode(pushButtonPin, INPUT_PULLUP);
 
+  // Initialize HID media control
   Consumer.begin();
+  Keyboard.begin();
 
-  encoder = new ClickEncoder(ENCODER_DT, ENCODER_CLK, ENCODER_SW);
+  // Initialize encoder
+  rotaryEncoder = new ClickEncoder(ENCODER_DT, ENCODER_CLK, ENCODER_SW);
 
+  // Setup timer interrupt for encoder
   Timer1.initialize(1000); // 1ms
   Timer1.attachInterrupt(timerIsr);
 
-  last = 0;
-  value = 0;
+  lastValue = 0;
+  currentValue = 0;
 }
 
 void loop() {
-  bool estadoActualSwitch = digitalRead(buttonSwitchPin) == HIGH;
+  bool currentSwitchButtonState = digitalRead(switchButtonPin) == HIGH;
 
-  // Detectar cambio de estado del botón switch
-  if (estadoActualSwitch != estadoAnteriorSwitch) {
-    estadoAnteriorSwitch = estadoActualSwitch;
+  // Detect switch button state change
+  if (currentSwitchButtonState != lastSwitchButtonState) {
+    lastSwitchButtonState = currentSwitchButtonState;
 
-    if (estadoActualSwitch) {
-      // Activado: resetear estados para evitar "efectos memoria"
-      encoder->getButton(); // limpia el estado del botón encoder
-      value = encoder->getValue(); // sincroniza value
-      last = value;
-      Serial.println("Controles ACTIVADOS");
+    if (currentSwitchButtonState) {
+      // Activated: reset states to avoid "memory effects"
+      rotaryEncoder->getButton(); // clear encoder button state
+      currentValue = rotaryEncoder->getValue(); // synchronize currentValue
+      lastValue = currentValue;
+      Serial.println("Controls ACTIVATED");
     } else {
-      Serial.println("Controles DESACTIVADOS");
+      Serial.println("Controls DEACTIVATED");
     }
   }
 
-  // Si controles están desactivados, salir del loop
-  if (!estadoActualSwitch) {
+  // If controls are deactivated, exit the loop
+  if (!currentSwitchButtonState) {
     return;
   }
 
-  // ===================== CONTROLES ACTIVADOS ======================
+  // ===================== CONTROLS ACTIVATED ======================
 
-  // Rotary encoder: volumen
-  value += encoder->getValue();
-  if (value != last) {
-    if (value > last) {
+  // Read encoder movement and reduce sensitivity
+  rawEncoderValue += rotaryEncoder->getValue();
+  logicalEncoderValue = rawEncoderValue / 4;  // Reduce sensitivity (4 steps per detent)
+
+  // If logical encoder position changed, adjust volume
+  if (logicalEncoderValue != lastLogicalEncoderValue) {
+    if (logicalEncoderValue > lastLogicalEncoderValue) {
       Consumer.write(MEDIA_VOLUME_UP);
-      Serial.println("VOL UP");
     } else {
       Consumer.write(MEDIA_VOLUME_DOWN);
-      Serial.println("VOL DOWN");
     }
-    last = value;
+    lastLogicalEncoderValue = logicalEncoderValue;
+    Serial.print("Encoder Value: ");
+    Serial.println(logicalEncoderValue);
   }
 
-  // Pulsación encoder: play/pause
- ClickEncoder::Button b = encoder->getButton();
-  if (b != ClickEncoder::Open) {
+  // Encoder button press: play/pause or lock screen
+  ClickEncoder::Button buttonState = rotaryEncoder->getButton();
+  if (buttonState != ClickEncoder::Open) {
     Serial.print("Button: ");
-    switch (b) {
+    switch (buttonState) {
       case ClickEncoder::Clicked:
         Keyboard.press(KEY_LEFT_GUI);
         Keyboard.press('l');
@@ -118,15 +134,15 @@ void loop() {
     }
   }
 
-  // Botón silenciar
-  int statePush = digitalRead(buttonPushPin);
-  if (statePush == LOW) {
-    if ((millis() - lastButtonPushTime) > debounceDelay) {
+  // Mute button
+  int pushButtonState = digitalRead(pushButtonPin);
+  if (pushButtonState == LOW) {
+    if ((millis() - lastPushButtonTime) > debounceTime) {
       Consumer.write(MEDIA_VOLUME_MUTE);
       Serial.println("MUTE");
-      lastButtonPushTime = millis();
+      lastPushButtonTime = millis();
     }
   }
 
-  delay(5); // Pequeña pausa para estabilidad
+  delay(5); // Small delay for stability
 }
